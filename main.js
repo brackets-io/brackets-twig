@@ -1,4 +1,4 @@
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4 */
+/*jslint plusplus: true, indent: 4 */
 /*global brackets, define */
 
 define(function (require) {
@@ -39,7 +39,7 @@ define(function (require) {
         var string = regexp.toString();
         return string.substr(string.lastIndexOf("/"));
     }
-    
+
     function combineRegExp(a, b) {
         var i, flags = (getRegExpFlags(a) + getRegExpFlags(b)).split("");
 
