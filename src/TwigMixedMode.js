@@ -65,7 +65,7 @@ define(function () {
         getStyle: function (stream, state) {
             var style = null;
 
-            if (stream.sol() && this.pendingToken) {
+            if (stream.sol() && state.pendingToken) {
                 state.pendingToken = null;
                 log("discard pending token early");
             }
@@ -90,7 +90,7 @@ define(function () {
                 style = this.twigMode.token(stream, state.twigState);
 
                 if (style === "tag" || style === "comment") {
-                    if (style.tag || !state.twigState.incomment) {
+                    if (style === "tag" || state.twigState.incomment) {
                         state.currentMode = this.twigMode;
                         state.currentState = state.twigState;
 
@@ -106,17 +106,14 @@ define(function () {
                     if (state.pendingString) {
                         while (!stream.eol()) {
                             if (stream.next() === state.pendingString) {
+                                state.pendingString = '';
                                 break;
                             }
                         }
 
-                        style = "string";
-
-                        if (!stream.eol()) {
-                            state.pendingString = '';
-                        }
-
                         log("pending string: " + stream.current());
+
+                        style = "string";
                     } else if (state.pendingToken && stream.pos < state.pendingToken.end) {
                         stream.pos = state.pendingToken.end;
                         style = state.pendingToken.style;
