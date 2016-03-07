@@ -90,14 +90,16 @@ define(function () {
                 style = this.twigMode.token(stream, state.twigState);
 
                 if (style === "tag" || style === "comment") {
-                    state.currentMode = this.twigMode;
-                    state.currentState = state.twigState;
+                    if (style.tag || !state.twigState.incomment) {
+                        state.currentMode = this.twigMode;
+                        state.currentState = state.twigState;
 
-                    if (style === "tag" && stream.current()[1] === "%") {
-                        state.twigTagOpened = true;
+                        if (style === "tag" && stream.current()[1] === "%") {
+                            state.twigTagOpened = true;
+                        }
+
+                        log("switching to twig mode");
                     }
-
-                    log("switching to twig mode");
                 } else {
                     stream.backUp(stream.current().length);
 
