@@ -37,7 +37,7 @@ define(function (require) {
 
     function getRegExpFlags(regexp) {
         var string = regexp.toString();
-        return string.substr(string.lastIndexOf("/"));
+        return string.substr(string.lastIndexOf("/") + 1);
     }
 
     function combineRegExp(a, b) {
