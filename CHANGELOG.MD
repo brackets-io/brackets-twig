@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.4] (2015-03-07)
+- end of attributes was not always properly detected
+
 ## [1.0.3] (2015-03-07)
 - twig comments on a single line shouldn't activate twig mode
 
