@@ -99,7 +99,7 @@ define(function (require) {
         LanguageManager.defineLanguage("twigmixed", {
             name: "Twig",
             mode: "twigmixed",
-            fileExtensions: ["twig", "html.twig"]
+            fileExtensions: ["twig", "html.twig", "twig.html"]
         });
     });
 });
