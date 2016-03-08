@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.5] (2015-03-08)
+- Add .twig.html extension support [\#1](https://github.com/Athorcis/brackets-twig/pull/1)
+
 ## [1.0.4] (2015-03-07)
 - end of attributes was not always properly detected
 
