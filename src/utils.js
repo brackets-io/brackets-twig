@@ -26,7 +26,7 @@ define(function (require) {
 
         if (paths.length > 0) {
             brackets.libRequire(paths, success);
-        } else {
+        } else if (typeof success === 'function') {
             success();
         }
     }
