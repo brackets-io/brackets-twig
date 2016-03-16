@@ -20,7 +20,7 @@ define(function (require) {
             modes = mode;
         }
 
-        for (i = 0, length = mode.length; i < length; ++i) {
+        for (i = 0, length = modes.length; i < length; ++i) {
             mode = modes[i];
 
             if (!CodeMirror.modes.hasOwnProperty(mode)) {
