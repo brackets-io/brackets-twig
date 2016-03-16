@@ -1,4 +1,4 @@
-/*jslint plusplus: true, indent: 4 */
+/*jslint indent: 4 */
 /*global brackets, define */
 
 define(function (require) {
@@ -7,58 +7,11 @@ define(function (require) {
     var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror"),
         LanguageManager = brackets.getModule("language/LanguageManager"),
 
+        utils = require("src/utils"),
         TwigMixedMode = require("src/TwigMixedMode"),
         TwigMixedState = require("src/TwigMixedState");
 
-    function loadMode(mode, success) {
-        var modes, i, length,
-            paths = [];
-
-        if (typeof mode === "string") {
-            modes = [mode];
-        } else {
-            modes = mode;
-        }
-
-        for (i = 0, length = modes.length; i < length; ++i) {
-            mode = modes[i];
-
-            if (!CodeMirror.modes.hasOwnProperty(mode)) {
-                paths.push("thirdparty/CodeMirror/mode/" + mode + "/" + mode);
-            }
-        }
-
-        if (paths.length > 0) {
-            brackets.libRequire(paths, success);
-        } else {
-            success();
-        }
-    }
-
-    function getRegExpFlags(regexp) {
-        var string = regexp.toString();
-        return string.substr(string.lastIndexOf("/") + 1);
-    }
-
-    function combineRegExp(a, b) {
-        var i, flags = (getRegExpFlags(a) + getRegExpFlags(b)).split("");
-
-        flags.sort();
-
-        for (i = flags.length; i > 0; --i) {
-            if (flags[i - 1] === flags[i]) {
-                flags.splice(i, 1);
-            }
-        }
-
-        return new RegExp("(?:" + a.source + ")|(?:" + b.source + ")", flags.join(""));
-    }
-
-    function extendElectricInput(mode, electricInput) {
-        mode.electricInput = combineRegExp(mode.electricInput, electricInput);
-    }
-
-    loadMode(["htmlmixed", "twig"], function () {
+    utils.loadMode(["htmlmixed", "twig"], function () {
         CodeMirror.defineMode("twigmixed", function (options, parserConfig) {
             var htmlMixedMode = CodeMirror.getMode(options, "htmlmixed"),
                 twigMode = CodeMirror.getMode(options, "twig"),
@@ -71,7 +24,7 @@ define(function (require) {
                         htmlMode = htmlMixedMode.innerMode(state.htmlMixedState).mode;
 
                     if (!htmlMode.twigMixedPatched) {
-                        extendElectricInput(htmlMode, /\{%\s*\w+\s*%/);
+                        utils.extendElectricInput(htmlMode, /\{%\s*\w+\s*%/);
                         htmlMode.twigMixedPatched = true;
                     }
 
