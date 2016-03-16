@@ -11,48 +11,52 @@ define(function (require) {
         TwigMixedMode = require("src/TwigMixedMode"),
         TwigMixedState = require("src/TwigMixedState");
 
-    utils.loadMode(["htmlmixed", "twig"], function () {
-        CodeMirror.defineMode("twigmixed", function (options, parserConfig) {
-            var htmlMixedMode = CodeMirror.getMode(options, "htmlmixed"),
-                twigMode = CodeMirror.getMode(options, "twig"),
+    utils.loadMode(["htmlmixed", "twig"]);
 
-                mode = new TwigMixedMode(options, htmlMixedMode, twigMode);
+    // we define the mode and the language without waiting for htmlmixed and
+    // twig to be loaded this create a race condition but if we wait then
+    // all the file extensions for which twigmixed is define as default
+    // language will see their default language switch to plain text
+    CodeMirror.defineMode("twigmixed", function (options, parserConfig) {
+        var htmlMixedMode = CodeMirror.getMode(options, "htmlmixed"),
+            twigMode = CodeMirror.getMode(options, "twig"),
 
-            return {
-                startState: function () {
-                    var state = new TwigMixedState(mode),
-                        htmlMode = htmlMixedMode.innerMode(state.htmlMixedState).mode;
+            mode = new TwigMixedMode(options, htmlMixedMode, twigMode);
 
-                    if (!htmlMode.twigMixedPatched) {
-                        utils.extendElectricInput(htmlMode, /\{%\s*\w+\s*%/);
-                        htmlMode.twigMixedPatched = true;
-                    }
+        return {
+            startState: function () {
+                var state = new TwigMixedState(mode),
+                    htmlMode = htmlMixedMode.innerMode(state.htmlMixedState).mode;
 
-                    return state;
-                },
-
-                copyState: function (state) {
-                    return state.clone();
-                },
-
-                token: function (stream, state) {
-                    return mode.getStyle(stream, state);
-                },
-
-                indent: function (state, textAfter) {
-                    return mode.getIndent(state, textAfter);
-                },
-
-                innerMode: function (state) {
-                    return state.getInnerMode();
+                if (!htmlMode.twigMixedPatched) {
+                    utils.extendElectricInput(htmlMode, /\{%\s*\w+\s*%/);
+                    htmlMode.twigMixedPatched = true;
                 }
-            };
-        });
 
-        LanguageManager.defineLanguage("twigmixed", {
-            name: "Twig",
-            mode: "twigmixed",
-            fileExtensions: ["twig", "html.twig", "twig.html"]
-        });
+                return state;
+            },
+
+            copyState: function (state) {
+                return state.clone();
+            },
+
+            token: function (stream, state) {
+                return mode.getStyle(stream, state);
+            },
+
+            indent: function (state, textAfter) {
+                return mode.getIndent(state, textAfter);
+            },
+
+            innerMode: function (state) {
+                return state.getInnerMode();
+            }
+        };
+    });
+
+    LanguageManager.defineLanguage("twigmixed", {
+        name: "Twig",
+        mode: "twigmixed",
+        fileExtensions: ["twig", "html.twig", "twig.html"]
     });
 });
