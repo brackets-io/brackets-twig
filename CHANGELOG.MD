@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.6] (2015-03-16)
+- define mode and language without waiting for htmlmixed and twig mode to be loaded fixes [\#2](https://github.com/Athorcis/brackets-twig/issues/2)
+
 ## [1.0.5] (2015-03-08)
 - Add .twig.html extension support [\#1](https://github.com/Athorcis/brackets-twig/pull/1)
 
