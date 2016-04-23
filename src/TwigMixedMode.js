@@ -106,7 +106,7 @@ define(function () {
                     if (state.pendingString) {
                         while (!stream.eol()) {
                             if (stream.next() === state.pendingString) {
-                                state.pendingString = '';
+                                state.pendingString = "";
                                 break;
                             }
                         }
@@ -123,6 +123,14 @@ define(function () {
                         state.pendingToken = null;
                     } else {
                         style = this.htmlMixedMode.token(stream, state.htmlMixedState);
+
+                        if (style && style.split(" ")[0] === "tag") {
+                            var htmlState = state.htmlMixedState.htmlState;
+
+                            if (htmlState.tagName) {
+                                htmlState.tagName = htmlState.tagName.replace(rTwigOpen, "");
+                            }
+                        }
                     }
 
                     var token = stream.current(),
@@ -163,7 +171,7 @@ define(function () {
                 var htmlState = state.htmlMixedState.htmlState,
                     htmlContext = htmlState.context;
 
-                if (textAfter.match(rHtmlClosingTag) && htmlContext.prev) {
+                if (textAfter.match(rHtmlClosingTag) && htmlContext && htmlContext.prev) {
                     htmlContext = htmlContext.prev;
                 }
 
