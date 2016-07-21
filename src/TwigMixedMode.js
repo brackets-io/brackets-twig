@@ -12,7 +12,7 @@ define(function () {
         rTwigOpen = /\{[#%{]/,
 
         twigTagEnds = [],
-        twigTagStarts = ["autoescape", "block", "for", "embed", "filter", "if", "spaceless", "with", "trans", "blocktrans", "macro", "verbatim"];
+        twigTagStarts = ["autoescape", "block", "for", "embed", "filter", "if", "spaceless", "with", "trans", "blocktrans", "macro", "verbatim", "sandbox"];
 
     twigTagStarts.forEach(function (tagName) {
         twigTagEnds.push("end" + tagName);
