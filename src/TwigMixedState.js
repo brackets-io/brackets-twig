@@ -16,6 +16,7 @@ define(function () {
         this.currentMode = this._htmlMixedMode;
         this.currentState = this.htmlMixedState;
 
+        this.conditionnalStrings = [];
         this.twigBlocks = [];
     }
 
@@ -35,6 +36,8 @@ define(function () {
         pendingString: '',
 
         pendingToken: null,
+
+        conditionnalStrings: null,
 
         twigTagOpened: false,
 
@@ -60,6 +63,8 @@ define(function () {
 
             state.pendingString = this.pendingString;
             state.pendingToken = this.pendingToken;
+
+            state.conditionnalStrings = this.conditionnalStrings.slice(0);
 
             state.twigTagOpened = this.twigTagOpened;
             state.twigBlocks = this.twigBlocks.slice(0);

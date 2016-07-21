@@ -37,10 +37,28 @@ define(function () {
 
         twigMode: null,
 
+        handleConditionnalStrings: function (tagName, state) {
+            var conditionnalStrings = state.conditionnalStrings;
+
+            if (tagName === "if") {
+                if (state.pendingString.length > 0) {
+                    conditionnalStrings.push(state.pendingString);
+                }
+            } else if (tagName === "elseif" || tagName === "else") {
+                if (state.twigBlocks[state.twigBlocks.length - 1] === "endif") {
+                    state.pendingString = conditionnalStrings[conditionnalStrings.length - 1];
+                }
+            } else if (tagName === "endif") {
+                state = conditionnalStrings.pop();
+            }
+        },
+
         detectTwigBlock: function (stream, state, style) {
             if (style === "keyword") {
                 var tagName = stream.current().trim(),
                     twigBlocks = state.twigBlocks;
+
+                this.handleConditionnalStrings(tagName, state);
 
                 if (twigTagStarts.indexOf(tagName) > -1) {
                     var htmlContext = state.htmlMixedState.htmlState.context;
@@ -157,7 +175,7 @@ define(function () {
                 }
             }
 
-            log(style, stream.current(), state.htmlMixedState.htmlState, state.twigState, state.pendingString, state.pendingToken, state.twigBlocks);
+            log(style, stream.current(), state.htmlMixedState.htmlState, state.twigState, state.pendingString, state.pendingToken, state.conditionnaStrings, state.twigBlocks);
 
             return style;
         },
