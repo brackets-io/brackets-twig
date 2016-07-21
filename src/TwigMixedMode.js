@@ -37,15 +37,13 @@ define(function () {
 
         twigMode: null,
 
-        handleConditionnalStrings: function (tagName, state) {
+        handleConditionnalTwigBlock: function (tagName, state) {
             var conditionnalStrings = state.conditionnalStrings;
 
             if (tagName === "if") {
-                if (state.pendingString.length > 0) {
-                    conditionnalStrings.push(state.pendingString);
-                }
+                conditionnalStrings.push(state.pendingString);
             } else if (tagName === "elseif" || tagName === "else") {
-                if (state.twigBlocks[state.twigBlocks.length - 1] === "endif") {
+                if (state.getContextualTagName() === "if") {
                     state.pendingString = conditionnalStrings[conditionnalStrings.length - 1];
                 }
             } else if (tagName === "endif") {
@@ -53,24 +51,19 @@ define(function () {
             }
         },
 
-        detectTwigBlock: function (stream, state, style) {
+        handleTwigTag: function (stream, state, style) {
             if (style === "keyword") {
-                var tagName = stream.current().trim(),
-                    twigBlocks = state.twigBlocks;
+                var tagName = stream.current().trim();
 
-                this.handleConditionnalStrings(tagName, state);
+                state.tagName = tagName;
+
+                this.handleConditionnalTwigBlock(tagName, state);
 
                 if (twigTagStarts.indexOf(tagName) > -1) {
-                    var htmlContext = state.htmlMixedState.htmlState.context;
-
-                    if (htmlContext && typeof htmlContext.twigBlockIndex === "number") {
-                        htmlContext.twigBlockIndex = twigBlocks.length;
-                    }
-
-                    twigBlocks.push("end" + tagName);
+                    state.pushContext();
                 } else if (twigTagEnds.indexOf(tagName) > -1) {
-                    if (twigBlocks[twigBlocks.length - 1] === tagName) {
-                        twigBlocks.pop();
+                    if (state.canPopContext(tagName)) {
+                        state.popContext();
                     } else {
                         style += " error";
                     }
@@ -83,9 +76,13 @@ define(function () {
         getStyle: function (stream, state) {
             var style = null;
 
-            if (stream.sol() && state.pendingToken) {
-                state.pendingToken = null;
-                log("discard pending token early");
+            if (stream.sol()) {
+                if (!state.tagName) {
+                    state.indented = stream.indentation();
+                } else if (state.pendingToken) {
+                    state.pendingToken = null;
+                    log("discard pending token early");
+                }
             }
 
             if (state.inTwigMode()) {
@@ -93,11 +90,15 @@ define(function () {
 
                 if (state.twigTagOpened) {
                     state.twigTagOpened = false;
-                    style = this.detectTwigBlock(stream, state, style);
+                    style = this.handleTwigTag(stream, state, style);
                 }
 
                 if (style === "tag" || style === "comment") {
                     if (style === "tag" || !state.twigState.incomment) {
+                        if (style === "tag") {
+                            state.tagName = "";
+                        }
+
                         state.currentMode = this.htmlMixedMode;
                         state.currentState = state.htmlMixedState;
 
@@ -111,6 +112,8 @@ define(function () {
                     if (style === "tag" || state.twigState.incomment) {
                         state.currentMode = this.twigMode;
                         state.currentState = state.twigState;
+
+                        state.tagStart = stream.column();
 
                         if (style === "tag" && stream.current()[1] === "%") {
                             state.twigTagOpened = true;
@@ -185,37 +188,26 @@ define(function () {
                 }
             }
 
-            log(style, stream.current(), state.htmlMixedState.htmlState, state.twigState, state.pendingString, state.pendingToken, state.conditionnaStrings, state.twigBlocks);
+            log(style, stream.current(), state.htmlMixedState.htmlState, state.twigState, state.pendingString, state.pendingToken, state.conditionnaStrings, state);
 
             return style;
         },
 
         getIndent: function (state, textAfter) {
-            var indent = this.htmlMixedMode.indent(state.htmlMixedState, textAfter),
-                indentUnit = this.options.indentUnit,
-                twigBlocks = state.twigBlocks;
+            var indent,
+                context = state.context,
+                indentUnit = this.options.indentUnit;
 
-            if (state.htmlMixedState.localMode === null) {
-                var htmlState = state.htmlMixedState.htmlState,
-                    htmlContext = htmlState.context;
+            if (state.inTwigMode()) {
+                indent = state.tagStart + indentUnit;
+            } else if (!context || context.htmlContext !== state.getHtmlContext()) {
+                indent = this.htmlMixedMode.indent(state.htmlMixedState, textAfter);
+            } else {
+                indent = context.indent + indentUnit;
 
-                if (textAfter.match(rHtmlClosingTag) && htmlContext && htmlContext.prev) {
-                    htmlContext = htmlContext.prev;
+                if (textAfter.match(rTwigElse) || textAfter.match(new RegExp("{%\\s+end" + context.tagName + "\\s+%}"))) {
+                    indent -= indentUnit;
                 }
-
-                if (!(htmlState.tokenize.isInAttribute || htmlState.tagName)) {
-                    if (htmlContext && typeof htmlContext.twigBlockIndex === "number") {
-                        indent += (twigBlocks.length - htmlContext.twigBlockIndex) * indentUnit;
-                    } else {
-                        indent += twigBlocks.length * indentUnit;
-                    }
-                }
-            }
-
-            if (textAfter.match(rTwigElse)) {
-                indent -= indentUnit;
-            } else if (textAfter.match(new RegExp("{%\\s+" + twigBlocks[twigBlocks.length - 1] + "\\s+%}"))) {
-                indent -= indentUnit;
             }
 
             return indent;

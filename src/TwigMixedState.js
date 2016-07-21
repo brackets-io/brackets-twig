@@ -1,10 +1,11 @@
 /*jslint vars: true, nomen: true, indent: 4 */
 /*global brackets, define */
 
-define(function () {
+define(function (require) {
     "use strict";
 
-    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
+    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror"),
+        TwigMixedContext = require("src/TwigMixedContext");
 
     function TwigMixedState(twigMixedMode) {
         this._htmlMixedMode = twigMixedMode.htmlMixedMode;
@@ -17,10 +18,17 @@ define(function () {
         this.currentState = this.htmlMixedState;
 
         this.conditionnalStrings = [];
-        this.twigBlocks = [];
     }
 
     TwigMixedState.prototype = {
+        indented: 0,
+
+        tagName: "",
+
+        tagStart: 0,
+
+        context: null,
+
         _htmlMixedMode: null,
 
         _twigMode: null,
@@ -35,15 +43,13 @@ define(function () {
 
         pendingToken: null,
 
-        pendingString: '',
+        pendingString: "",
 
-        previousPendingString: '',
+        previousPendingString: "",
 
         conditionnalStrings: null,
 
         twigTagOpened: false,
-
-        twigBlocks: null,
 
         inTwigMode: function () {
             return this.currentMode === this._twigMode;
@@ -53,6 +59,13 @@ define(function () {
             var htmlMixedState = CodeMirror.copyState(this._htmlMixedMode, this.htmlMixedState),
                 twigState = CodeMirror.copyState(this._twigMode, this.twigState),
                 state = Object.create(TwigMixedState.prototype);
+
+            state.indented = this.indented;
+
+            state.tagName = this.tagName;
+            state.tagStart = this.tagStart;
+
+            state.context = this.context ? this.context.clone() : null;
 
             state._htmlMixedMode = this._htmlMixedMode;
             state._twigMode = this._twigMode;
@@ -70,7 +83,6 @@ define(function () {
             state.conditionnalStrings = this.conditionnalStrings.slice(0);
 
             state.twigTagOpened = this.twigTagOpened;
-            state.twigBlocks = this.twigBlocks.slice(0);
 
             return state;
         },
@@ -81,6 +93,34 @@ define(function () {
 
                 state: this.currentState
             };
+        },
+
+        getHtmlContext: function () {
+            return this.htmlMixedState.htmlState.context;
+        },
+
+        pushContext: function () {
+            var tagName = this.tagName,
+                tagStart = this.tagStart;
+
+            this.tagName = this.tagStart = null;
+            this.context = new TwigMixedContext(this, tagName, tagStart === this.indented);
+        },
+
+        getContextualTagName: function () {
+            if (this.context) {
+                return this.context.tagName;
+            }
+
+            return "";
+        },
+
+        canPopContext: function (tagName) {
+            return "end" + this.getContextualTagName() === tagName;
+        },
+
+        popContext: function () {
+            this.context = this.context.previous;
         }
     };
 
