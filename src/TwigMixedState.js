@@ -33,9 +33,11 @@ define(function () {
 
         currentState: null,
 
+        pendingToken: null,
+
         pendingString: '',
 
-        pendingToken: null,
+        previousPendingString: '',
 
         conditionnalStrings: null,
 
@@ -61,9 +63,10 @@ define(function () {
             state.currentMode = this.currentMode;
             state.currentState = this.inTwigMode() ? twigState : htmlMixedState;
 
-            state.pendingString = this.pendingString;
             state.pendingToken = this.pendingToken;
 
+            state.pendingString = this.pendingString;
+            state.previousPendingString = this.previousPendingString;
             state.conditionnalStrings = this.conditionnalStrings.slice(0);
 
             state.twigTagOpened = this.twigTagOpened;

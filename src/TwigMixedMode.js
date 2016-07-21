@@ -124,6 +124,7 @@ define(function () {
                     if (state.pendingString) {
                         while (!stream.eol()) {
                             if (stream.next() === state.pendingString) {
+                                state.previousPendingString = state.pendingString;
                                 state.pendingString = "";
                                 break;
                             }
@@ -154,15 +155,22 @@ define(function () {
                     var token = stream.current(),
                         twigOpening = token.search(rTwigOpen);
 
-                    if (twigOpening > -1) {
-                        var stringStartMatches;
+                    if (style && twigOpening > -1) {
+                        var stringStart,
+                            stringStartMatches;
 
-                        if (style === "string") {
+                        if (style === "string" ) {
                             stringStartMatches = token.match(rStringStart);
+
+                            if (stringStartMatches) {
+                                stringStart = stringStartMatches[0];
+                            } else {
+                                stringStart = state.previousPendingString;
+                            }
                         }
 
-                        if (stringStartMatches && token.match(new RegExp(stringStartMatches[0] + "$"))) {
-                            state.pendingString = stringStartMatches[0];
+                        if (stringStart && token.match(new RegExp(stringStart + "$"))) {
+                            state.pendingString = stringStart;
                         } else {
                             state.pendingToken = {
                                 end: stream.pos,
@@ -172,6 +180,8 @@ define(function () {
 
                         stream.backUp(token.length - twigOpening);
                     }
+
+                    state.previousPendingString = "";
                 }
             }
 
