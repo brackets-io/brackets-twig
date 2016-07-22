@@ -57,7 +57,7 @@ define(function (require) {
     LanguageManager.defineLanguage("twigmixed", {
         name: "Twig",
         mode: "twigmixed",
-        fileExtensions: ["twig", "html.twig", "twig.html"]
+        fileExtensions: ["html.twig", "twig.html"]
     })
     .done(function (twig) {
         twig._setLanguageForMode("twig:inner", twig);
