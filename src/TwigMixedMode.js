@@ -47,7 +47,7 @@ define(function () {
                     state.pendingString = conditionnalStrings[conditionnalStrings.length - 1];
                 }
             } else if (tagName === "endif") {
-                state = conditionnalStrings.pop();
+                conditionnalStrings.pop();
             }
         },
 
