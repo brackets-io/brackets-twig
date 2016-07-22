@@ -19,7 +19,7 @@ define(function (require) {
     // language will see their default language switch to plain text
     CodeMirror.defineMode("twigmixed", function (options, parserConfig) {
         var htmlMixedMode = CodeMirror.getMode(options, "htmlmixed"),
-            twigMode = CodeMirror.getMode(options, "twig"),
+            twigMode = CodeMirror.getMode(options, "twig:inner"),
 
             mode = new TwigMixedMode(options, htmlMixedMode, twigMode);
 
@@ -58,5 +58,8 @@ define(function (require) {
         name: "Twig",
         mode: "twigmixed",
         fileExtensions: ["twig", "html.twig", "twig.html"]
+    })
+    .done(function (twig) {
+        twig._setLanguageForMode("twig:inner", twig);
     });
 });
