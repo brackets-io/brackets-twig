@@ -79,7 +79,9 @@ define(function () {
             if (stream.sol()) {
                 if (!state.tagName) {
                     state.indented = stream.indentation();
-                } else if (state.pendingToken) {
+                }
+                
+                if (state.pendingToken) {
                     state.pendingToken = null;
                     log("discard pending token early");
                 }
