@@ -22,4 +22,9 @@ page.onCallback = function (data) {
     }
 };
 
+page.onError = function (message, trace) {
+    system.sterr.write(message + "\r\n\r\n  " + (t.file || t.sourceURL) + ":" + t.line);
+    phantom.exit(1);
+};
+
 page.open("http://localhost:8080/test/index.html");
