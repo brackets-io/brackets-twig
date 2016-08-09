@@ -23,7 +23,7 @@ page.onCallback = function (data) {
 };
 
 page.onError = function (message, trace) {
-    system.sterr.write(message + "\r\n\r\n  " + (t.file || t.sourceURL) + ":" + t.line);
+    system.stderr.write(message + "\r\n\r\n  " + (trace[0].file || trace[0].sourceURL) + ":" + trace[0].line);
     phantom.exit(1);
 };
 
