@@ -1,13 +1,16 @@
-/*jslint vars: true, nomen: true, indent: 4 */
-/*global brackets, define */
 
-define(function (require) {
+(function (global, factory) {
+    if (typeof exports === "object" && typeof module === "object") {
+        module.exports = factory(require("./TwigMixedContext"));
+    } else if (typeof define === "function" && define.amd) {
+        define(["./TwigMixedContext"], factory);
+    } else {
+        global.TwigMixedState = factory(global.TwigMixedContext);
+    }
+}(this, function (TwigMixedContext) {
     "use strict";
 
-    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror"),
-        TwigMixedContext = require("src/TwigMixedContext");
-
-    function TwigMixedState(twigMixedMode) {
+    function TwigMixedState(CodeMirror, twigMixedMode) {
         this._htmlMixedMode = twigMixedMode.htmlMixedMode;
         this._twigMode = twigMixedMode.twigMode;
 
@@ -55,7 +58,7 @@ define(function (require) {
             return this.currentMode === this._twigMode;
         },
 
-        clone: function () {
+        clone: function (CodeMirror) {
             var htmlMixedState = CodeMirror.copyState(this._htmlMixedMode, this.htmlMixedState),
                 twigState = CodeMirror.copyState(this._twigMode, this.twigState),
                 state = Object.create(TwigMixedState.prototype);
@@ -125,4 +128,4 @@ define(function (require) {
     };
 
     return TwigMixedState;
-});
+}));

@@ -1,65 +1,36 @@
-/*jslint indent: 4 */
-/*global brackets, define */
+/* global brackets */
 
-define(function (require) {
+(function (factory) {
+    if (typeof exports === "object" && typeof module === "object") {
+        module.exports = factory(require("./src/TwigMixedMode"));
+    } else if (typeof define === "function" && define.amd) {
+        define(["./src/TwigMixedMode"], factory);
+    } else {
+        factory(global.TwigMixedMode);
+    }
+}(function (TwigMixedMode) {
     "use strict";
 
-    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror"),
-        LanguageManager = brackets.getModule("language/LanguageManager"),
+    if (typeof brackets === "object") {
+        var codeMirrorRoot = "thirdparty/CodeMirror",
+            CodeMirror = brackets.getModule(codeMirrorRoot + "/lib/codemirror"),
+            LanguageManager = brackets.getModule("language/LanguageManager");
 
-        utils = require("src/utils"),
-        TwigMixedMode = require("src/TwigMixedMode"),
-        TwigMixedState = require("src/TwigMixedState");
+        // we define the mode and the language without waiting for htmlmixed and
+        // twig to be loaded this create a race condition but if we wait then
+        // all the file extensions for which twigmixed is define as default
+        // language will see their default language switch to plain text
+        TwigMixedMode.define(CodeMirror, codeMirrorRoot);
 
-    utils.loadMode(["htmlmixed", "twig"]);
+        LanguageManager.defineLanguage("twigmixed", {
+            name: "Twig",
+            mode: "twigmixed",
+            fileExtensions: ["html.twig", "twig.html"]
+        })
+        .done(function (twig) {
+            twig._setLanguageForMode("twig:inner", twig);
+        });
+    }
 
-    // we define the mode and the language without waiting for htmlmixed and
-    // twig to be loaded this create a race condition but if we wait then
-    // all the file extensions for which twigmixed is define as default
-    // language will see their default language switch to plain text
-    CodeMirror.defineMode("twigmixed", function (options, parserConfig) {
-        var htmlMixedMode = CodeMirror.getMode(options, "htmlmixed"),
-            twigMode = CodeMirror.getMode(options, "twig:inner"),
-
-            mode = new TwigMixedMode(options, htmlMixedMode, twigMode);
-
-        return {
-            startState: function () {
-                var state = new TwigMixedState(mode),
-                    htmlMode = htmlMixedMode.innerMode(state.htmlMixedState).mode;
-
-                if (!htmlMode.twigMixedPatched) {
-                    utils.extendElectricInput(htmlMode, /\{%\s*\w+\s*%/);
-                    htmlMode.twigMixedPatched = true;
-                }
-
-                return state;
-            },
-
-            copyState: function (state) {
-                return state.clone();
-            },
-
-            token: function (stream, state) {
-                return mode.getStyle(stream, state);
-            },
-
-            indent: function (state, textAfter) {
-                return mode.getIndent(state, textAfter);
-            },
-
-            innerMode: function (state) {
-                return state.getInnerMode();
-            }
-        };
-    });
-
-    LanguageManager.defineLanguage("twigmixed", {
-        name: "Twig",
-        mode: "twigmixed",
-        fileExtensions: ["html.twig", "twig.html"]
-    })
-    .done(function (twig) {
-        twig._setLanguageForMode("twig:inner", twig);
-    });
-});
+    return TwigMixedMode;
+}));

@@ -1,19 +1,30 @@
 {
     "name": "athorcis.brackets-twig",
-    
+
     "title": "Brackets Twig",
-    
+
     "description": "Highlight Twig syntax inside HTML files",
-    
+
     "homepage": "https://github.com/athorcis/brackets-twig",
-    
+
     "version": "1.1.0",
-    
+
     "licence": "Apache-2.0",
-    
+
     "author": "Athorcis (https://github.com/athorcis)",
-    
+
     "engines": {
         "brackets": ">=0.39"
+    },
+
+    "devDependencies": {
+        "codemirror": "https://github.com/codemirror/CodeMirror/archive/5.17.0.tar.gz",
+        "node-static": "^0.7.7",
+        "phantomjs-prebuilt": "^2.1.7",
+        "requirejs": "^2.2.0"
+    },
+
+    "scripts": {
+        "test": "node test/run.js"
     }
 }

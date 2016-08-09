@@ -1,12 +1,17 @@
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define */
 
-define(function () {
+(function (globa, factory) {
+    if (typeof exports === "object" && typeof module === "object") {
+        module.exports = factory(require("./TwigMixedState"), require("./TwigMixedUtils"));
+    } else if (typeof define === "function" && define.amd) {
+        define(["./TwigMixedState", "./TwigMixedUtils"], factory);
+    } else {
+        global.TwigMixedMode = factory(global.TwigMixedState, global.TwigMixedUtils);
+    }
+}(this, function (TwigMixedState, TwigMixedUtils) {
     "use strict";
 
     var debug = false,
 
-        rHtmlClosingTag = /^<\/([\w_:\.\-]*)/,
         rTwigElse = /\{%\s*else(?:if)?/,
         rStringStart = /^["']/,
         rTwigOpen = /\{[#%{]/,
@@ -20,6 +25,7 @@ define(function () {
 
     function log() {
         if (debug) {
+            // eslint-disable-next-line no-console
             console.log.apply(console, arguments);
         }
     }
@@ -73,24 +79,30 @@ define(function () {
             return style;
         },
 
-        getStyle: function (stream, state) {
+        getTwigStyle: function (stream, state) {
             var style = null;
 
-            if (stream.sol()) {
-                if (!state.tagName) {
-                    state.indented = stream.indentation();
-                }
-                
-                if (state.pendingToken) {
-                    state.pendingToken = null;
-                    log("discard pending token early");
-                }
-            }
+            if (state.pendingKeyword) {
+                stream.pos = state.pendingKeyword.end;
+                style = state.pendingKeyword.style;
 
-            if (state.inTwigMode()) {
+                state.pendingKeyword = null;
+            } else {
                 style = this.twigMode.token(stream, state.twigState);
 
-                if (state.twigTagOpened) {
+                if (style === "keyword") {
+                    state.pendingKeyword = {
+                        end: stream.pos,
+                        style: style
+                    };
+
+                    stream.pos = stream.start + 1;
+                    style = null;
+                } else if (style === "variable" && stream.current() === " ") {
+                    style = null;
+                }
+
+                if (state.twigTagOpened && style) {
                     state.twigTagOpened = false;
                     style = this.handleTwigTag(stream, state, style);
                 }
@@ -107,87 +119,114 @@ define(function () {
                         log("switching to html mode");
                     }
                 }
-            } else {
-                style = this.twigMode.token(stream, state.twigState);
+            }
 
-                if (style === "tag" || style === "comment") {
-                    if (style === "tag" || state.twigState.incomment) {
-                        state.currentMode = this.twigMode;
-                        state.currentState = state.twigState;
+            return style;
+        },
 
-                        state.tagStart = stream.column();
+        getHtmlMixedStyle: function (stream, state) {
+            var style = this.twigMode.token(stream, state.twigState);
 
-                        if (style === "tag" && stream.current()[1] === "%") {
-                            state.twigTagOpened = true;
-                        }
+            if (style === "tag" || style === "comment") {
+                if (style === "tag" || state.twigState.incomment) {
+                    state.currentMode = this.twigMode;
+                    state.currentState = state.twigState;
 
-                        log("switching to twig mode");
-                    }
-                } else {
-                    stream.backUp(stream.current().length);
+                    state.tagStart = stream.column();
 
-                    if (state.pendingString) {
-                        while (!stream.eol()) {
-                            if (stream.next() === state.pendingString) {
-                                state.previousPendingString = state.pendingString;
-                                state.pendingString = "";
-                                break;
-                            }
-                        }
-
-                        log("pending string: " + stream.current());
-
-                        style = "string";
-                    } else if (state.pendingToken && stream.pos < state.pendingToken.end) {
-                        stream.pos = state.pendingToken.end;
-                        style = state.pendingToken.style;
-
-                        log("pending token: " + state.pendingToken.style);
-
-                        state.pendingToken = null;
-                    } else {
-                        style = this.htmlMixedMode.token(stream, state.htmlMixedState);
-
-                        if (style && style.split(" ")[0] === "tag") {
-                            var htmlState = state.htmlMixedState.htmlState;
-
-                            if (htmlState.tagName) {
-                                htmlState.tagName = htmlState.tagName.replace(rTwigOpen, "");
-                            }
-                        }
+                    if (style === "tag" && stream.current()[1] === "%") {
+                        state.twigTagOpened = true;
                     }
 
-                    var token = stream.current(),
-                        twigOpening = token.search(rTwigOpen);
-
-                    if (style && twigOpening > -1) {
-                        var stringStart,
-                            stringStartMatches;
-
-                        if (style === "string" ) {
-                            stringStartMatches = token.match(rStringStart);
-
-                            if (stringStartMatches) {
-                                stringStart = stringStartMatches[0];
-                            } else {
-                                stringStart = state.previousPendingString;
-                            }
-                        }
-
-                        if (stringStart && token.match(new RegExp(stringStart + "$"))) {
-                            state.pendingString = stringStart;
-                        } else {
-                            state.pendingToken = {
-                                end: stream.pos,
-                                style: style
-                            };
-                        }
-
-                        stream.backUp(token.length - twigOpening);
-                    }
-
-                    state.previousPendingString = "";
+                    log("switching to twig mode");
                 }
+            } else {
+                stream.backUp(stream.current().length);
+
+                if (state.pendingString) {
+                    while (!stream.eol()) {
+                        if (stream.next() === state.pendingString) {
+                            state.previousPendingString = state.pendingString;
+                            state.pendingString = "";
+                            break;
+                        }
+                    }
+
+                    log("pending string: " + stream.current());
+
+                    style = "string";
+                } else if (state.pendingToken && stream.pos < state.pendingToken.end) {
+                    stream.pos = state.pendingToken.end;
+                    style = state.pendingToken.style;
+
+                    log("pending token: " + state.pendingToken.style);
+
+                    state.pendingToken = null;
+                } else {
+                    style = this.htmlMixedMode.token(stream, state.htmlMixedState);
+
+                    if (style && style.split(" ")[0] === "tag") {
+                        var htmlState = state.htmlMixedState.htmlState;
+
+                        if (htmlState.tagName) {
+                            htmlState.tagName = htmlState.tagName.replace(rTwigOpen, "");
+                        }
+                    }
+                }
+
+                var token = stream.current(),
+                    twigOpening = token.search(rTwigOpen);
+
+                if (style && twigOpening > -1) {
+                    var stringStart,
+                        stringStartMatches;
+
+                    if (style === "string") {
+                        stringStartMatches = token.match(rStringStart);
+
+                        if (stringStartMatches) {
+                            stringStart = stringStartMatches[0];
+                        } else {
+                            stringStart = state.previousPendingString;
+                        }
+                    }
+
+                    if (stringStart && token.match(new RegExp(stringStart + "$"))) {
+                        state.pendingString = stringStart;
+                    } else {
+                        state.pendingToken = {
+                            end: stream.pos,
+                            style: style
+                        };
+                    }
+
+                    stream.backUp(token.length - twigOpening);
+                }
+
+                state.previousPendingString = "";
+            }
+
+            return style;
+        },
+
+        getStyle: function (stream, state) {
+            var style;
+
+            if (stream.sol()) {
+                if (!state.tagName) {
+                    state.indented = stream.indentation();
+                }
+
+                if (state.pendingToken) {
+                    state.pendingToken = null;
+                    log("discard pending token early");
+                }
+            }
+
+            if (state.inTwigMode()) {
+                style = this.getTwigStyle(stream, state);
+            } else {
+                style = this.getHtmlMixedStyle(stream, state);
             }
 
             log(style, stream.current(), state.htmlMixedState.htmlState, state.twigState, state.pendingString, state.pendingToken, state.conditionnaStrings, state);
@@ -216,5 +255,58 @@ define(function () {
         }
     };
 
+    function defineMode(CodeMirror) {
+        CodeMirror.defineMode("twigmixed", function (options) {
+            var htmlMixedMode = CodeMirror.getMode(options, "htmlmixed"),
+                twigMode = CodeMirror.getMode(options, "twig:inner"),
+
+                mode = new TwigMixedMode(options, htmlMixedMode, twigMode);
+
+            return {
+                startState: function () {
+                    var state = new TwigMixedState(CodeMirror, mode),
+                        htmlMode = htmlMixedMode.innerMode(state.htmlMixedState).mode;
+
+                    if (!htmlMode.twigMixedPatched) {
+                        TwigMixedUtils.extendElectricInput(htmlMode, /\{%\s*\w+\s*%/);
+                        htmlMode.twigMixedPatched = true;
+                    }
+
+                    return state;
+                },
+
+                copyState: function (state) {
+                    return state.clone(CodeMirror);
+                },
+
+                token: function (stream, state) {
+                    return mode.getStyle(stream, state);
+                },
+
+                indent: function (state, textAfter) {
+                    return mode.getIndent(state, textAfter);
+                },
+
+                innerMode: function (state) {
+                    return state.getInnerMode();
+                }
+            };
+        });
+    }
+
+    TwigMixedMode.define = function (CodeMirror, codeMirrorRoot, callback) {
+        var deps = ["htmlmixed", "twig"];
+
+        if (typeof callback === "function") {
+            TwigMixedUtils.loadModes(CodeMirror, codeMirrorRoot, deps, function () {
+                defineMode(CodeMirror);
+                callback();
+            });
+        } else {
+            TwigMixedUtils.loadModes(CodeMirror, codeMirrorRoot, deps);
+            defineMode(CodeMirror);
+        }
+    };
+
     return TwigMixedMode;
-});
+}));

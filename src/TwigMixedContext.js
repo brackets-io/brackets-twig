@@ -1,5 +1,13 @@
 
-define(function () {
+(function (global, factory) {
+    if (typeof exports === "object" && typeof module === "object") {
+        module.exports = factory();
+    } else if (typeof define === "function" && define.amd) {
+        define(factory);
+    } else {
+        global.TwigMixedContext = factory();
+    }
+}(this, function () {
     "use strict";
 
     function TwigMixedContext(state, tagName) {
@@ -33,4 +41,4 @@ define(function () {
     };
 
     return TwigMixedContext;
-});
+}));
