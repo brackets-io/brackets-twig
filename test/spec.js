@@ -4,7 +4,7 @@ define({
         "[tag {%] [keyword if] [variable a] [tag %}]"
     ],
 
-    HtmlTagWithoutSpace: [
+    NoSpace: [
         "[tag&bracket <][tag a{%] [variable b] [tag %}][tag&bracket ></][tag a][tag&bracket >]"
     ]
 
