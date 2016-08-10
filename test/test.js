@@ -1,20 +1,32 @@
-/* global requirejs, test, runTests, callPhantom */
+/* global requirejs, callPhantom */
 
 requirejs.config({
     paths: {
         codemirror: "../node_modules/codemirror"
+    },
+
+    shim: {
+        "codemirror/test/driver": {
+            init: function () {
+                return {
+                    test: this.test,
+                    runTests: this.runTests
+                };
+            }
+        },
+
+        "codemirror/test/mode_test": ["codemirror/test/driver"]
     }
 });
 
 require([
     "codemirror/lib/codemirror",
     "../main",
-    "spec"
-], function (CodeMirror, TwigMixedMode, spec) {
+    "spec",
+    "codemirror/test/driver",
+    "codemirror/test/mode_test"
+], function (CodeMirror, TwigMixedMode, spec, cmTestDriver) {
     window.CodeMirror = CodeMirror;
-
-    require(["codemirror/test/driver"]);
-    require(["codemirror/test/mode_test"]);
 
     TwigMixedMode.define(CodeMirror, "codemirror", function () {
         var testName,
@@ -22,7 +34,7 @@ require([
 
         for (testName in spec) {
             if (Object.prototype.hasOwnProperty.call(spec, testName)) {
-                test.mode(testName, twig, spec[testName]);
+                cmTestDriver.test.mode(testName, twig, spec[testName]);
             }
         }
 
@@ -48,7 +60,7 @@ require([
             }
         }
 
-        runTests(function (status, name, message) {
+        cmTestDriver.runTests(function (status, name, message) {
             if (status === "done") {
                 if (typeof callPhantom === "function") {
                     callPhantom({
