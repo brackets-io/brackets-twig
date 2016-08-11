@@ -9,7 +9,7 @@ var page = webPageCreate();
 page.onCallback = function (data) {
     var method = data && data.method;
 
-    if (method === "outputTestResult") {
+    if (method === "outputResult") {
         var message = data.status + " " + data.name;
 
         if (data.status === "ok") {
