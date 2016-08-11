@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.1] - 2016-08-11
+- Brackets-Twig can be use in CodeMirror without Brackets
+- fix a regression when parsing multiline html attribute
+
 ## [1.1.0] - 2016-07-22
 - fix several bugs with interlaced twig tags and html quoted attributes
 - improve indentation
