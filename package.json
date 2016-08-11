@@ -24,12 +24,13 @@
 
     "devDependencies": {
         "codemirror": "https://github.com/codemirror/CodeMirror/archive/5.17.0.tar.gz",
+        "eslint": "^3.2.2",
         "node-static": "^0.7.7",
         "phantomjs-prebuilt": "^2.1.7",
         "requirejs": "^2.2.0"
     },
 
     "scripts": {
-        "test": "node test/run.js"
+        "test": "eslint src/**.js test/**.js --cache && node test/run.js"
     }
 }
