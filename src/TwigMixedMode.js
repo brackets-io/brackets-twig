@@ -25,7 +25,7 @@
 
     function log() {
         if (debug) {
-            // eslint-disable-next-line no-console
+            // eslint-disable-next-line no-undef, no-console
             console.log.apply(console, arguments);
         }
     }

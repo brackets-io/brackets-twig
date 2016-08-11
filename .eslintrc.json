@@ -38,6 +38,7 @@
         "max-lines": "off",
         "max-params": "off",
         "max-statements": "off",
+        "multiline-ternary": "off",
         "newline-after-var": "off",
         "no-plusplus": "off",
         "no-ternary": "off",
