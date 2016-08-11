@@ -1,8 +1,8 @@
 /* eslint-env node */
 /* eslint-disable no-console, no-process-exit */
 
-const nodeStatic = require("node-static"),
-    http = require("http");
+const nodeStatic = require("node-static");
+const http = require("http");
 
 var server,
     files = new nodeStatic.Server();
@@ -19,9 +19,9 @@ server = http.createServer(function (request, response) {
 });
 
 server.listen(8080, function () {
-    const pathJoin = require("path").join,
-        spawn = require("child_process").spawn,
-        phantomJsPath = require("phantomjs-prebuilt").path;
+    const pathJoin = require("path").join;
+    const spawn = require("child_process").spawn;
+    const phantomJsPath = require("phantomjs-prebuilt").path;
 
     var args = [pathJoin(__dirname, "phantom.js")],
         phantom = spawn(phantomJsPath, args),

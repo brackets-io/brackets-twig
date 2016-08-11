@@ -4,7 +4,6 @@
     },
 
     "env": {
-        "browser": true,
         "commonjs": true,
         "amd": true
     },
@@ -19,6 +18,7 @@
         "no-implicit-coercion": "off",
         "no-magic-numbers": "off",
         "no-param-reassign": "off",
+        "no-warning-comments": "warn",
         "vars-on-top": "off",
 
         "strict": "off",
