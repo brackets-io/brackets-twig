@@ -19,7 +19,7 @@ require.config({
     }
 });
 
-define(["codemirror/test/driver", "codemirror/test/mode_test"], function (cmDriver) {
+define(["codemirror/lib/codemirror", "codemirror/test/driver", "codemirror/test/mode_test"], function (CodeMirror, cmDriver) {
     "use strict";
 
     var inPhantomJs = typeof callPhantom === "function";
@@ -70,6 +70,10 @@ define(["codemirror/test/driver", "codemirror/test/mode_test"], function (cmDriv
         testMode: function (mode, specs, callback) {
             var name,
                 hasOwn = Object.prototype.hasOwnProperty;
+
+            if (typeof mode === "string") {
+                mode = CodeMirror.getMode({ indentUnit: 4 }, mode);
+            }
 
             for (name in specs) {
                 if (hasOwn.call(specs, name)) {
