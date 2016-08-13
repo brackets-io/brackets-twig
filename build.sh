@@ -1,6 +1,16 @@
 #!/bin/sh
 
-output=athorcis.brackets-twig.zip
+output=dist/athorcis.brackets-twig.zip
+dir=$(dirname "$output")
 
-rm $output
-npm test && git archive --format zip -o $output master
+if [ ! -d "$dir" ]
+then
+    mkdir -p "$dir"
+fi
+
+if [ -f "$output" ]
+then
+    rm "$output"
+fi
+
+git archive --format zip -o "$output" --worktree-attributes master
