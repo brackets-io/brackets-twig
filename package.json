@@ -5,13 +5,21 @@
 
     "description": "Highlight Twig syntax inside HTML files",
 
+    "keywords": ["brackets-extension", "twig"],
+
     "homepage": "https://github.com/Athorcis/brackets-twig",
+
+    "bugs": "https://github.com/Athorcis/brackets-twig/issues",
 
     "version": "1.1.1",
 
     "license": "Apache-2.0",
 
     "author": "Athorcis (https://github.com/Athorcis)",
+
+    "directories": {
+        "lib": "src"
+    },
 
     "repository": {
         "type" : "git",
