@@ -51,6 +51,7 @@
         "quotes": ["error", "double"],
         "require-jsdoc": "off",
         "semi": ["error", "always"],
+        "sort-keys": "off",
         "sort-vars": "off",
         "space-before-function-paren": ["error", { "anonymous": "always", "named": "never" }],
 
