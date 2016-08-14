@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/Athorcis/brackets-twig.svg?branch=master)](https://travis-ci.org/Athorcis/brackets-twig)
-# Brackets Twig
+# Brackets Twig [![Build Status](https://travis-ci.org/Athorcis/brackets-twig.svg?branch=master)](https://travis-ci.org/Athorcis/brackets-twig)
 
 A Brackets extension to highlight Twig syntax inside HTML files.
 
