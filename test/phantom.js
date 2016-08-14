@@ -15,7 +15,6 @@
  */
 
 /* eslint-env phantomjs */
-/* eslint no-console: "off" */
 
 const system = require("system");
 const webPageCreate = require("webpage").create;
