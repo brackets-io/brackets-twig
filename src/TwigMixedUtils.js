@@ -27,6 +27,16 @@
 }(this, function () {
     "use strict";
 
+    /**
+     *  An utility function to load CodeMirror modes
+     *
+     *  @param {Object}         CodeMirror      The current instance of CodeMirror
+     *  @param {string}         codeMirrorRoot  The path to the CodeMirror directory
+     *  @param {Array.<string>} modes           A list of modes to load
+     *  @param {Function=}      success         A function to call after all modes are loaded
+     *
+     *  @returns {undefined}
+     */
     function loadModes(CodeMirror, codeMirrorRoot, modes, success) {
         var i, length, mode,
             paths = [];
@@ -62,6 +72,13 @@
         }
     }
 
+    /**
+     *  Returns the flags of a regular expression
+     *
+     *  @param {RegExp} regexp  a regular expression
+     *
+     *  @returns {string} the flags of the regular expression
+     */
     function getRegExpFlags(regexp) {
         var string = regexp.toString(),
             flags = string.substr(string.lastIndexOf("/") + 1);
@@ -69,6 +86,14 @@
         return flags;
     }
 
+    /**
+     *  Combine two regular expressions
+     *
+     *  @param {RegExp} a   a regular expression
+     *  @param {RegExp} b   another regular expression
+     *
+     *  @returns {RegExp} The combination of the two given regular expressions
+     */
     function combineRegExp(a, b) {
         var i,
             flags = (getRegExpFlags(a) + getRegExpFlags(b)).split("");
@@ -84,6 +109,12 @@
         return new RegExp("(?:" + a.source + ")|(?:" + b.source + ")", flags.join(""));
     }
 
+    /**
+     *  @param {Object} mode            The mode of which we want extend the electricInput attribute
+     *  @param {RegExp} electricInput   The regexp we want add to the electricInput attribute
+     *
+     *  @returns {undefined}
+     */
     function extendElectricInput(mode, electricInput) {
         mode.electricInput = combineRegExp(mode.electricInput, electricInput);
     }

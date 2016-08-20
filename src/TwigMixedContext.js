@@ -25,6 +25,12 @@
 }(this, function () {
     "use strict";
 
+    /**
+     *  Context used to get indent
+     *  @class
+     *  @param {TwigMixedState} state   The current state of the parser
+     *  @param {string}         tagName The current tag name
+     */
     function TwigMixedContext(state, tagName) {
         this.htmlContext = state.getHtmlContext();
         this.previous = state.context;
@@ -42,6 +48,11 @@
 
         indent: 0,
 
+        /**
+         *  Clone the current context
+         *
+         *  @returns {TwigMixedContext} the cloned context
+         */
         clone: function () {
             var context = Object.create(TwigMixedContext.prototype);
 

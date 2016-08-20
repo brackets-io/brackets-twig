@@ -40,6 +40,10 @@ define(["codemirror/lib/codemirror", "codemirror/test/driver", "codemirror/test/
 
     var inPhantomJs = typeof callPhantom === "function";
 
+    /**
+     *  An utility class to test CodeMirror modes
+     *  @class
+     */
     function TestDriver() {
         // nothing to do
     }
@@ -47,11 +51,27 @@ define(["codemirror/lib/codemirror", "codemirror/test/driver", "codemirror/test/
     TestDriver.prototype = {
         element: null,
 
+        /**
+         *  Send data to phantom script
+         *
+         *  @param {Object} data the data to send
+         *
+         *  @returns {undefined}
+         */
         callPhantom: function (data) {
             // eslint-disable-next-line no-undef
             callPhantom(data);
         },
 
+        /**
+         *  Output test results in a browser
+         *
+         *  @param {string}     status  The status of the test
+         *  @param {string}     name    The name of the test
+         *  @param {string=}    message Additionnal informations about the test
+         *
+         *  @returns {undefined}
+         */
         outputResult: function (status, name, message) {
             if (inPhantomJs) {
                 this.callPhantom({
@@ -72,6 +92,17 @@ define(["codemirror/lib/codemirror", "codemirror/test/driver", "codemirror/test/
             }
         },
 
+        /**
+         *  A default callback used by testMode
+         *
+         *  @see testMode
+         *
+         *  @param {string}     status  The status of the test
+         *  @param {string}     name    The name of the test
+         *  @param {string=}    message Additionnal informations about the test
+         *
+         *  @returns {undefined}
+         */
         callback: function (status, name, message) {
             if (status === "done") {
                 if (inPhantomJs) {
@@ -83,6 +114,15 @@ define(["codemirror/lib/codemirror", "codemirror/test/driver", "codemirror/test/
             }
         },
 
+        /**
+         *  Test a CodeMirror mode and output results accordingly
+         *
+         *  @param {string|Object}  mode        The mode to test
+         *  @param {Object}         specs       The specs to respect
+         *  @param {Function=}      callback    The callback which is callback each time a test is completed
+         *
+         *  @returns {undefined}
+         */
         testMode: function (mode, specs, callback) {
             var name,
                 hasOwn = Object.prototype.hasOwnProperty;
