@@ -1,6 +1,9 @@
-# Brackets Twig [![Build Status](https://travis-ci.org/Athorcis/brackets-twig.svg?branch=master)](https://travis-ci.org/Athorcis/brackets-twig)
+# Brackets Twig
 
 A Brackets extension to highlight Twig syntax inside HTML files.
+
+[![Build Status](https://travis-ci.org/Athorcis/brackets-twig.svg?branch=master)](https://travis-ci.org/Athorcis/brackets-twig)
+[![Dependency Status](https://dependencyci.com/github/Athorcis/brackets-twig/badge)](https://dependencyci.com/github/Athorcis/brackets-twig)
 
 ## Install from URL
 
