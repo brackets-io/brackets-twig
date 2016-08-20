@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.1.2] - 2016-08-12
+- fix a regression when parsing interlaced twig conditions inside html attributes
+
 ## [1.1.1] - 2016-08-11
 - Brackets-Twig can be use in CodeMirror without Brackets
 - fix a regression when parsing multiline html attribute
