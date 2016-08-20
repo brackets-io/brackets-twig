@@ -21,7 +21,14 @@ define({
 
     NoSpace: [
         "[tag&bracket <][tag a{%] [variable b] [tag %}][tag&bracket ></][tag a][tag&bracket >]"
-    ]
+    ],
 
-    // TODO: multiline attribute test
+    Conditions: [
+        "[tag&bracket <][tag a] [attribute b]=[string \"][tag {%] [keyword if] [variable c] [tag %}][string \"][tag {%] [keyword else] [tag %}][string \"][tag {%] [keyword endif] [tag %}][tag&bracket >]"
+    ],
+
+    MultilineAttributes: [
+        "[tag&bracket <][tag a] [attribute b]=[string \"][tag {{] [variable c]",
+        "          [tag }}][string \"][tag&bracket >]"
+    ]
 });
