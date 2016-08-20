@@ -165,27 +165,27 @@
                     // and we don't want that
                     style = null;
                 }
+            }
 
-                // if we are at the start of a twig tag
-                // we check if it's a twig block or not
-                if (state.twigTagOpened && style) {
-                    state.twigTagOpened = false;
-                    style = this.handleTwigTag(stream, state, style);
-                }
+            // if we are at the start of a twig tag
+            // we check if it's a twig block or not
+            if (state.twigTagOpened && style) {
+                state.twigTagOpened = false;
+                style = this.handleTwigTag(stream, state, style);
+            }
 
-                // if we are at the end of a twig tag
-                // we switch back to html mode
-                if (style === "tag" || style === "comment") {
-                    if (style === "tag" || !state.twigState.incomment) {
-                        if (style === "tag") {
-                            state.tagName = "";
-                        }
-
-                        state.currentMode = this.htmlMixedMode;
-                        state.currentState = state.htmlMixedState;
-
-                        log("switching to html mode");
+            // if we are at the end of a twig tag
+            // we switch back to html mode
+            if (style === "tag" || style === "comment") {
+                if (style === "tag" || !state.twigState.incomment) {
+                    if (style === "tag") {
+                        state.tagName = "";
                     }
+
+                    state.currentMode = this.htmlMixedMode;
+                    state.currentState = state.htmlMixedState;
+
+                    log("switching to html mode");
                 }
             }
 
