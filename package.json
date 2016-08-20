@@ -42,5 +42,13 @@
     "scripts": {
         "test": "eslint src/**.js test/**.js --cache && node test/run.js",
         "prepublish": "npm test"
+    },
+
+    "i18n": ["en", "fr"],
+
+    "package-i18n": {
+        "fr": {
+            "description": "Colore le code Twig dans les fichiers HTML."
+        }
     }
 }
