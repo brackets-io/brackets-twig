@@ -16,3 +16,9 @@ A Brackets extension to highlight Twig syntax inside HTML files.
 1. Download this extension using the ZIP button above and unzip it.
 2. Copy it in Brackets' `/extensions/user` folder by selecting `Help > Show Extension Folder` in the menu.
 3. Reload Brackets.
+
+## FAQ
+### Why Twig isn't defined as default language for .twig files ?
+It's because the HTML language already define itself as default language for twig files and there is no way to override this behavior programmatically.
+
+But you can change it quite easily, start by opening one of your twig files in Brackets, then switch the language to Twig and then click on the button which is at the top of the language menu (it says "Set as Default for .TWIG Files")
