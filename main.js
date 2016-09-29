@@ -34,8 +34,8 @@
 
         // we define the mode and the language without waiting for htmlmixed and
         // twig to be loaded this create a race condition but if we wait then
-        // all the file extensions for which twigmixed is define as default
-        // language will see their default language switch to plain text
+        // all the file extensions for which twigmixed is defined as default
+        // language will see their default language switched to plain text
         TwigMixedMode.define(CodeMirror, codeMirrorRoot);
 
         LanguageManager.defineLanguage("twigmixed", {
