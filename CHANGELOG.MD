@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.1.3] - 2016-12-05
+- fix a bug with the default language of twig files being reset when reloading brackets [\#6](https://github.com/Athorcis/brackets-twig/issues/6)
+- fix a parsing bug when a twig tag was placed after raw text on the same line
+
 ## [1.1.2] - 2016-08-12
 - fix a regression when parsing interlaced twig conditions inside html attributes
 
