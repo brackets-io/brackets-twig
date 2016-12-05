@@ -264,7 +264,7 @@
 
                 // we get the current token and we look if there is
                 // a twig tag starting inside that token
-                if (style && twigOpening > -1) {
+                if (twigOpening > -1) {
                     var stringStart,
                         stringStartMatches;
 

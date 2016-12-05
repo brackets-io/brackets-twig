@@ -30,5 +30,9 @@ define({
     MultilineAttributes: [
         "[tag&bracket <][tag a] [attribute b]=[string \"][tag {{] [variable c]",
         "          [tag }}][string \"][tag&bracket >]"
+    ],
+
+    TagAfterText: [
+        "a[tag {{}}]"
     ]
 });
