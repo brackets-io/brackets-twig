@@ -6,3 +6,4 @@
 .npmignore      export-ignore
 .travis.yml     export-ignore
 build.sh        export-ignore
+yarn.lock       export-ignore
