@@ -28,6 +28,7 @@
 
         "global-require": "off",
 
+        "capitalized-comments": "off",
         "consistent-this": ["error", "self"],
         "func-names": ["warn", "never"],
         "func-style": "off",
