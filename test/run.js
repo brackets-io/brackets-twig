@@ -27,7 +27,7 @@ server = http.createServer(function (request, response) {
     request.addListener("end", function () {
         files.serve(request, response, function (error) {
             if (error) {
-                console.log(error);
+                console.log(request.url, error);
                 process.exit(1);
             }
         });

@@ -16,7 +16,8 @@
 
 require.config({
     paths: {
-        codemirror: "../node_modules/codemirror"
+        "codemirror": "../node_modules/codemirror",
+        "codemirror-test": "../node_modules/codemirror-test"
     }
 });
 

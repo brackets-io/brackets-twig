@@ -18,7 +18,7 @@
 
 require.config({
     shim: {
-        "codemirror/test/driver": {
+        "codemirror-test/test/driver": {
             deps: ["codemirror/lib/codemirror"],
 
             init: function (CodeMirror) {
@@ -31,11 +31,11 @@ require.config({
             }
         },
 
-        "codemirror/test/mode_test": ["codemirror/test/driver"]
+        "codemirror-test/test/mode_test": ["codemirror-test/test/driver"]
     }
 });
 
-define(["codemirror/lib/codemirror", "codemirror/test/driver", "codemirror/test/mode_test"], function (CodeMirror, cmDriver) {
+define(["codemirror/lib/codemirror", "codemirror-test/test/driver", "codemirror-test/test/mode_test"], function (CodeMirror, cmDriver) {
     "use strict";
 
     var inPhantomJs = typeof callPhantom === "function";

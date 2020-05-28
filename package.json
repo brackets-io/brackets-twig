@@ -1,51 +1,43 @@
 {
     "name": "athorcis.brackets-twig",
-
     "title": "Brackets Twig",
-
     "description": "Highlight Twig syntax inside HTML files",
-
-    "keywords": ["brackets-extension", "twig"],
-
+    "keywords": [
+        "brackets-extension",
+        "twig"
+    ],
     "homepage": "https://github.com/Athorcis/brackets-twig",
-
     "bugs": "https://github.com/Athorcis/brackets-twig/issues",
-
     "version": "1.1.3",
-
     "license": "Apache-2.0",
-
     "author": "Athorcis (https://github.com/Athorcis)",
-
     "directories": {
         "lib": "src"
     },
-
     "repository": {
-        "type" : "git",
-        "url" : "https://github.com/Athorcis/brackets-twig.git"
+        "type": "git",
+        "url": "https://github.com/Athorcis/brackets-twig.git"
     },
-
     "engines": {
         "brackets": ">=0.39"
     },
-
     "devDependencies": {
-        "codemirror": "https://github.com/codemirror/CodeMirror/archive/5.17.0.tar.gz",
-        "eslint": "^3.6.1",
-        "node-static": "^0.7.7",
+        "codemirror": "5.54.0",
+        "codemirror-test": "https://github.com/codemirror/CodeMirror/archive/5.54.0.tar.gz",
+        "eslint": "^7.1.0",
+        "node-static": "^0.7.11",
         "npmignore": "Athorcis/npmignore#0.3.0",
         "phantomjs-prebuilt": "^2.1.7",
-        "requirejs": "^2.3.2"
+        "requirejs": "^2.3.6"
     },
-
     "scripts": {
         "test": "eslint src/**.js test/**.js --cache && node test/run.js",
         "prepublish": "npm test"
     },
-
-    "i18n": ["en", "fr"],
-
+    "i18n": [
+        "en",
+        "fr"
+    ],
     "package-i18n": {
         "fr": {
             "description": "Colore le code Twig dans les fichiers HTML."
